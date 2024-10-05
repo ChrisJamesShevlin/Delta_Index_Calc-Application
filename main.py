@@ -11,7 +11,7 @@ def calculate_delta():
         # Formula calculation
         delta_formula = (vix / 100) + ((current_price - moving_avg) / moving_avg) + ((vix / 100) * sqrt(30 / 365) / 2)
 
-        # Clamp the delta between 0.12 and 0.25
+        # Clamp the delta between 0.12 and 0.20
         delta = max(0.12, min(0.20, delta_formula))
 
         # Display the result
