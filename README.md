@@ -11,7 +11,7 @@ This repository contains a simple **Delta Calculator** built with **Python** and
 - [Usage](#usage)
 - [Customization](#customization)
 - [Error Handling](#error-handling)
-- [License](#license)
+
 
 ## Overview
 
@@ -113,9 +113,7 @@ result_label.config(text="Invalid input, please enter numeric values")
 
 This ensures the program doesn't crash and informs the user of incorrect input.
 
-## License
 
-This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more details.
 
 ---
 
