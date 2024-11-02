@@ -1,12 +1,36 @@
 import tkinter as tk
+from tkinter import ttk
 from math import sqrt
+
+# Function to handle number pad button clicks
+def button_click(value):
+    # Determine which entry field is currently focused
+    if vix_entry.focus_get() == vix_entry:
+        current_text = vix_var.get()
+        vix_var.set(current_text + value)
+    elif price_entry.focus_get() == price_entry:
+        current_text = price_var.get()
+        price_var.set(current_text + value)
+    elif ma_entry.focus_get() == ma_entry:
+        current_text = ma_var.get()
+        ma_var.set(current_text + value)
+
+# Function to clear the entry field
+def clear_entry():
+    # Determine which entry field is currently focused
+    if vix_entry.focus_get() == vix_entry:
+        vix_var.set("")
+    elif price_entry.focus_get() == price_entry:
+        price_var.set("")
+    elif ma_entry.focus_get() == ma_entry:
+        ma_var.set("")
 
 # Function to calculate delta based on user inputs
 def calculate_delta():
     try:
-        vix = float(vix_entry.get())
-        current_price = float(price_entry.get())
-        moving_avg = float(ma_entry.get())
+        vix = float(vix_var.get())
+        current_price = float(price_var.get())
+        moving_avg = float(ma_var.get())
 
         # Formula calculation
         delta_formula = (vix / 100) + ((current_price - moving_avg) / moving_avg) + ((vix / 100) * sqrt(30 / 365) / 2)
@@ -23,45 +47,75 @@ def calculate_delta():
 root = tk.Tk()
 root.title("Delta Calculator")
 
-# Set window size and dark background color
-root.geometry("800x600")
-root.config(bg="#1c1c1c")  # Dark background
+# Set window size and modern background color
+root.geometry("1024x900")
+root.config(bg="#2C2C2C")  # Dark grey background
 
-# Modern font configuration
-label_font = ("Roboto", 18, "bold")
-entry_font = ("Roboto", 18)
-result_font = ("Roboto", 20, "bold")
-button_font = ("Roboto", 18)
+# Define styles for labels and buttons
+style = ttk.Style()
+style.theme_use('clam')  # Use a modern theme
+style.configure("TLabel", font=("Arial", 24), background="#2C2C2C", foreground="#00BFFF")
+style.configure("TButton", font=("Arial", 24), background="#3D3D3D", foreground="#00BFFF", borderwidth=0)
 
-# Function for button hover effect
-def on_enter(event):
-    calculate_button.config(bg="#00BFFF", fg="black")  # Bright blue on hover
+# Map the button hover effects
+style.map("TButton", background=[("active", "#00BFFF"), ("!active", "#3D3D3D")],
+          foreground=[("active", "black"), ("!active", "#00BFFF")])
 
-def on_leave(event):
-    calculate_button.config(bg="#333", fg="#00BFFF")   # Dark button, bright blue text
+# Centering frame for alignment
+center_frame = tk.Frame(root, bg="#2C2C2C")
+center_frame.place(relx=0.5, rely=0.5, anchor="center")
 
-# Create and place labels and entry fields
-tk.Label(root, text="Enter VIX Level:", font=label_font, bg="#1c1c1c", fg="#00BFFF").grid(row=0, column=0, padx=20, pady=20)
-vix_entry = tk.Entry(root, font=entry_font, bg="#333", fg="#00BFFF", insertbackground="#00BFFF", relief="flat")
-vix_entry.grid(row=0, column=1, padx=20, pady=20)
+# Create separate variables for each entry field
+vix_var = tk.StringVar()
+price_var = tk.StringVar()
+ma_var = tk.StringVar()
 
-tk.Label(root, text="Enter Current Price:", font=label_font, bg="#1c1c1c", fg="#00BFFF").grid(row=1, column=0, padx=20, pady=20)
-price_entry = tk.Entry(root, font=entry_font, bg="#333", fg="#00BFFF", insertbackground="#00BFFF", relief="flat")
-price_entry.grid(row=1, column=1, padx=20, pady=20)
+# Create labels and entry fields with explicit font settings
+ttk.Label(center_frame, text="Enter VIX Level:").grid(row=0, column=0, padx=10, pady=(20, 10), sticky="e")
+vix_entry = tk.Entry(center_frame, textvariable=vix_var, font=("Arial", 32, 'bold'), 
+                     bg="#2C2C2C", fg="#00BFFF", justify='center', insertbackground="#00BFFF", width=7)
+vix_entry.grid(row=0, column=1, padx=10, pady=(20, 10), ipady=10)  # Adjusted width for six digits
 
-tk.Label(root, text="Enter Moving Average (MA):", font=label_font, bg="#1c1c1c", fg="#00BFFF").grid(row=2, column=0, padx=20, pady=20)
-ma_entry = tk.Entry(root, font=entry_font, bg="#333", fg="#00BFFF", insertbackground="#00BFFF", relief="flat")
-ma_entry.grid(row=2, column=1, padx=20, pady=20)
+ttk.Label(center_frame, text="Enter Current Price:").grid(row=1, column=0, padx=10, pady=(10, 10), sticky="e")
+price_entry = tk.Entry(center_frame, textvariable=price_var, font=("Arial", 32, 'bold'), 
+                       bg="#2C2C2C", fg="#00BFFF", justify='center', insertbackground="#00BFFF", width=7)
+price_entry.grid(row=1, column=1, padx=10, pady=(10, 10), ipady=10)  # Adjusted width for six digits
 
-# Create a calculate button with color and hover effect
-calculate_button = tk.Button(root, text="Calculate Delta", font=button_font, bg="#333", fg="#00BFFF", relief="flat", command=calculate_delta)
-calculate_button.grid(row=3, column=0, columnspan=2, pady=20)
-calculate_button.bind("<Enter>", on_enter)
-calculate_button.bind("<Leave>", on_leave)
+ttk.Label(center_frame, text="Enter Moving Average (MA):").grid(row=2, column=0, padx=10, pady=(10, 20), sticky="e")
+ma_entry = tk.Entry(center_frame, textvariable=ma_var, font=("Arial", 32, 'bold'), 
+                    bg="#2C2C2C", fg="#00BFFF", justify='center', insertbackground="#00BFFF", width=7)
+ma_entry.grid(row=2, column=1, padx=10, pady=(10, 20), ipady=10)  # Adjusted width for six digits
+
+# Create a frame for the number pad
+number_pad_frame = tk.Frame(center_frame, bg="#2C2C2C")
+number_pad_frame.grid(row=3, column=0, columnspan=2, pady=(20, 40))
+
+# Number pad buttons
+buttons = [
+    '7', '8', '9',
+    '4', '5', '6',
+    '1', '2', '3',
+    '0', 'C'  # C for clear
+]
+
+# Add buttons to the number pad
+for i, button in enumerate(buttons):
+    if button == 'C':
+        action = clear_entry
+    else:
+        action = lambda value=button: button_click(value)
+    
+    btn = tk.Button(number_pad_frame, text=button, font=("Arial", 24), width=5, height=2,
+                    bg="#3D3D3D", fg="#00BFFF", command=action)
+    btn.grid(row=i // 3, column=i % 3, padx=5, pady=5)
+
+# Create a calculate button
+calculate_button = ttk.Button(center_frame, text="Calculate Delta", command=calculate_delta)
+calculate_button.grid(row=4, column=0, columnspan=2, pady=(30, 40), ipadx=20, ipady=10)
 
 # Create a label to display the result
-result_label = tk.Label(root, text="", font=result_font, bg="#1c1c1c", fg="#00BFFF")
-result_label.grid(row=4, column=0, columnspan=2, pady=30)
+result_label = ttk.Label(center_frame, text="", font=("Arial", 24), background="#2C2C2C", foreground="#00BFFF")
+result_label.grid(row=5, column=0, columnspan=2, pady=20)
 
 # Start the Tkinter event loop
 root.mainloop()
